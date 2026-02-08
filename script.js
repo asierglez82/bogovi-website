@@ -16,18 +16,20 @@ let activeArtwork = null;
 const prefersReducedMotion = window.matchMedia(
   "(prefers-reduced-motion: reduce)"
 ).matches;
-const revealObserver = prefersReducedMotion
-  ? null
-  : new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          entry.target.classList.add("is-visible");
-          revealObserver.unobserve(entry.target);
-        });
-      },
-      { threshold: 0.2 }
-    );
+const canObserve = "IntersectionObserver" in window;
+const revealObserver =
+  prefersReducedMotion || !canObserve
+    ? null
+    : new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add("is-visible");
+            revealObserver.unobserve(entry.target);
+          });
+        },
+        { threshold: 0.2 }
+      );
 
 const formatTitle = (rawTitle) => {
   if (!rawTitle) return "";
@@ -61,7 +63,7 @@ const registerReveals = (elements) => {
   elements.forEach((element) => {
     if (element.dataset.revealBound) return;
     element.dataset.revealBound = "true";
-    if (prefersReducedMotion) {
+    if (prefersReducedMotion || !revealObserver) {
       element.classList.add("is-visible");
       return;
     }
@@ -306,6 +308,10 @@ if (contactForm) {
       es: "No se pudo enviar. Inténtalo de nuevo.",
       en: "Could not send. Please try again."
     },
+    captcha: {
+      es: "Completa el captcha antes de enviar.",
+      en: "Please complete the captcha."
+    },
     required: {
       es: "Completa todos los campos.",
       en: "Please complete all fields."
@@ -337,6 +343,13 @@ if (contactForm) {
       return;
     }
 
+    const captchaToken = window.grecaptcha?.getResponse?.() || "";
+
+    if (!captchaToken) {
+      setStatus("captcha");
+      return;
+    }
+
     try {
       setSubmitting(true);
       setStatus("sending");
@@ -345,7 +358,12 @@ if (contactForm) {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ nombre: name, email, mensaje: message })
+        body: JSON.stringify({
+          nombre: name,
+          email,
+          mensaje: message,
+          captchaToken
+        })
       });
 
       if (!response.ok) {
@@ -353,6 +371,7 @@ if (contactForm) {
       }
 
       contactForm.reset();
+      window.grecaptcha?.reset?.();
       setStatus("success");
     } catch (error) {
       setStatus("error");

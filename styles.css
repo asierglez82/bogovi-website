@@ -454,6 +454,11 @@ a {
   backdrop-filter: blur(14px);
 }
 
+.g-recaptcha {
+  transform: scale(0.95);
+  transform-origin: left top;
+}
+
 .form-status {
   min-height: 1.2em;
   margin: 0;
@@ -550,6 +555,13 @@ textarea {
   transform: translateY(0);
 }
 
+@media (max-width: 900px) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .reveal {
     opacity: 1;
@@ -578,6 +590,10 @@ textarea {
   .section-head {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .g-recaptcha {
+    transform: scale(0.85);
   }
 }
 :root {

@@ -4,22 +4,49 @@ const nodemailer = require("nodemailer");
 
 const smtpUser = defineSecret("SMTP_USER");
 const smtpPass = defineSecret("SMTP_PASS");
+const recaptchaSecret = defineSecret("RECAPTCHA_SECRET");
 
 exports.sendContact = onRequest(
-  { secrets: [smtpUser, smtpPass], region: "europe-west1" },
+  { secrets: [smtpUser, smtpPass, recaptchaSecret], region: "europe-west1" },
   async (req, res) => {
     if (req.method !== "POST") {
       res.status(405).json({ ok: false, error: "Method not allowed" });
       return;
     }
 
-    const { nombre, email, mensaje } = req.body || {};
+    const { nombre, email, mensaje, captchaToken } = req.body || {};
     const nameValue = String(nombre || "").trim();
     const emailValue = String(email || "").trim();
     const messageValue = String(mensaje || "").trim();
+    const captchaValue = String(captchaToken || "").trim();
 
-    if (!nameValue || !emailValue || !messageValue) {
+    if (!nameValue || !emailValue || !messageValue || !captchaValue) {
       res.status(400).json({ ok: false, error: "Missing fields" });
+      return;
+    }
+
+    try {
+      const verifyResponse = await fetch(
+        "https://www.google.com/recaptcha/api/siteverify",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          body: new URLSearchParams({
+            secret: recaptchaSecret.value(),
+            response: captchaValue
+          })
+        }
+      );
+      const verifyData = await verifyResponse.json();
+      if (!verifyData.success) {
+        res.status(400).json({ ok: false, error: "Captcha failed" });
+        return;
+      }
+    } catch (error) {
+      console.error("Captcha error", error);
+      res.status(500).json({ ok: false, error: "Captcha error" });
       return;
     }
 

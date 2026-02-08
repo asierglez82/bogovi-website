@@ -14,7 +14,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=20260207" />
   </head>
   <body>
     <header class="site-header">
@@ -92,7 +92,10 @@
             class="gallery-grid"
             id="gallery-grid"
             data-gallery-path="assets/gallery"
-          ></div>
+          >
+            <p class="lang-es">Cargando obras...</p>
+            <p class="lang-en">Loading artworks...</p>
+          </div>
         </div>
       </section>
 
@@ -247,6 +250,7 @@
                 data-placeholder-en="Tell me about your project"
               ></textarea>
             </div>
+            <div class="g-recaptcha" data-sitekey="6LerqmQsAAAAALUL2wnGVqi39TEGmFeWlYuj_50j" data-theme="dark"></div>
             <button class="btn primary lang-es" type="submit">Enviar mensaje</button>
             <button class="btn primary lang-en" type="submit">Send message</button>
             <p class="form-status" aria-live="polite"></p>
@@ -271,6 +275,7 @@
       <p id="lightbox-title"></p>
     </dialog>
 
-    <script src="script.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="script.js?v=20260207"></script>
   </body>
 </html>
