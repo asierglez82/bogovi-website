@@ -5,6 +5,7 @@ const lightboxImage = document.getElementById("lightbox-image");
 const lightboxTitle = document.getElementById("lightbox-title");
 const lightboxClose = document.querySelector(".lightbox-close");
 const inputFields = document.querySelectorAll("[data-placeholder-es]");
+const customCursor = document.querySelector(".custom-cursor");
 const contactForm = document.querySelector(".contact-form");
 const galleryGrid = document.querySelector("#gallery-grid");
 const galleryPath =
@@ -15,6 +16,9 @@ let currentLang = "es";
 let activeArtwork = null;
 const prefersReducedMotion = window.matchMedia(
   "(prefers-reduced-motion: reduce)"
+).matches;
+const hasFinePointer = window.matchMedia(
+  "(hover: hover) and (pointer: fine)"
 ).matches;
 const canObserve = "IntersectionObserver" in window;
 const revealObserver =
@@ -125,9 +129,9 @@ const openLightboxFromCard = (card) => {
   }
 };
 
-const createGalleryCard = (src) => {
-  const title = getImageTitleFromSrc(src);
-  if (!title) return null;
+const createGalleryCard = ({ src, title, sold }) => {
+  const resolvedTitle = title || getImageTitleFromSrc(src);
+  if (!resolvedTitle) return null;
 
   const card = document.createElement("button");
   card.type = "button";
@@ -135,25 +139,38 @@ const createGalleryCard = (src) => {
   card.setAttribute("data-lightbox", "");
   card.setAttribute("data-src", src);
   card.setAttribute("data-fallback", galleryFallback);
-  card.setAttribute("data-title-es", title);
-  card.setAttribute("data-title-en", title);
+  card.setAttribute("data-title-es", resolvedTitle);
+  card.setAttribute("data-title-en", resolvedTitle);
 
   const img = document.createElement("img");
   img.src = src;
-  img.alt = title;
+  img.alt = resolvedTitle;
   img.setAttribute("data-fallback", galleryFallback);
 
   const meta = document.createElement("span");
   meta.className = "art-meta";
   const titleEs = document.createElement("span");
   titleEs.className = "art-title lang-es";
-  titleEs.textContent = title;
+  titleEs.textContent = resolvedTitle;
   const titleEn = document.createElement("span");
   titleEn.className = "art-title lang-en";
-  titleEn.textContent = title;
+  titleEn.textContent = resolvedTitle;
 
   meta.appendChild(titleEs);
   meta.appendChild(titleEn);
+  if (sold) {
+    const badge = document.createElement("span");
+    badge.className = "art-badge";
+    const soldEs = document.createElement("span");
+    soldEs.className = "lang-es";
+    soldEs.textContent = "Vendido";
+    const soldEn = document.createElement("span");
+    soldEn.className = "lang-en";
+    soldEn.textContent = "Sold";
+    badge.appendChild(soldEs);
+    badge.appendChild(soldEn);
+    card.appendChild(badge);
+  }
   card.appendChild(img);
   card.appendChild(meta);
 
@@ -161,20 +178,47 @@ const createGalleryCard = (src) => {
   return card;
 };
 
-const normalizeGalleryItem = (item) => {
+const getGalleryItemSrc = (item) => {
   if (!item) return "";
-  if (/^https?:\/\//i.test(item)) return item;
-  if (item.startsWith("/")) return item;
-  if (item.startsWith(`${galleryPath}/`)) return item;
-  return `${galleryPath}/${item}`;
+  if (typeof item === "string") return item;
+  return item.src || item.file || item.image || "";
 };
 
-const isImageFile = (fileName) => /\.(jpe?g|png|webp|gif)$/i.test(fileName);
+const getGalleryItemTitle = (item) => {
+  if (!item || typeof item === "string") return "";
+  return item.title || "";
+};
+
+const getGalleryItemSold = (item) => {
+  if (!item || typeof item === "string") return false;
+  return Boolean(item.sold || item.vendido || item.status === "sold");
+};
+
+const normalizeGalleryItem = (src) => {
+  if (!src) return "";
+  if (/^https?:\/\//i.test(src)) return src;
+  if (src.startsWith("/")) return src;
+  if (src.startsWith(`${galleryPath}/`)) return src;
+  return `${galleryPath}/${src}`;
+};
+
+const isImageFile = (fileName) =>
+  /\.(jpe?g|png|webp|gif)$/i.test(fileName);
 
 const renderGallery = (items) => {
   if (!galleryGrid) return;
   galleryGrid.innerHTML = "";
-  const validItems = items.filter((item) => isImageFile(item));
+  const validItems = items
+    .map((item) => {
+      const src = getGalleryItemSrc(item);
+      if (!isImageFile(src)) return null;
+      return {
+        src,
+        title: getGalleryItemTitle(item),
+        sold: getGalleryItemSold(item)
+      };
+    })
+    .filter(Boolean);
   if (!validItems.length) {
     galleryGrid.innerHTML =
       '<p class="lang-es">No hay obras aún.</p><p class="lang-en">No artworks yet.</p>';
@@ -182,8 +226,12 @@ const renderGallery = (items) => {
   }
 
   validItems.forEach((item) => {
-    const src = normalizeGalleryItem(item);
-    const card = createGalleryCard(src);
+    const src = normalizeGalleryItem(item.src);
+    const card = createGalleryCard({
+      src,
+      title: item.title,
+      sold: item.sold
+    });
     if (card) {
       galleryGrid.appendChild(card);
     }
@@ -269,6 +317,44 @@ document.querySelectorAll('a[href^="#"]').forEach((link) => {
     target.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 });
+
+if (customCursor && hasFinePointer) {
+  let mouseX = 0;
+  let mouseY = 0;
+  let rafId = null;
+
+  const updateCursor = () => {
+    customCursor.style.left = `${mouseX}px`;
+    customCursor.style.top = `${mouseY}px`;
+    rafId = null;
+  };
+
+  document.addEventListener("mousemove", (event) => {
+    mouseX = event.clientX;
+    mouseY = event.clientY;
+    customCursor.classList.add("is-visible");
+    if (!rafId) {
+      rafId = window.requestAnimationFrame(updateCursor);
+    }
+  });
+
+  document.addEventListener("mousedown", () => {
+    customCursor.classList.add("is-active");
+  });
+
+  document.addEventListener("mouseup", () => {
+    customCursor.classList.remove("is-active");
+  });
+
+  document.querySelectorAll("a, button").forEach((el) => {
+    el.addEventListener("mouseenter", () => {
+      customCursor.classList.add("is-active");
+    });
+    el.addEventListener("mouseleave", () => {
+      customCursor.classList.remove("is-active");
+    });
+  });
+}
 
 if (lightboxImage) {
   lightboxImage.addEventListener("error", () => {

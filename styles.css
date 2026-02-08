@@ -23,8 +23,11 @@
 body {
   margin: 0;
   font-family: "Inter", system-ui, -apple-system, sans-serif;
-  background: radial-gradient(circle at 10% 10%, rgba(255, 194, 245, 0.08), transparent 40%),
-    radial-gradient(circle at 90% 0%, rgba(242, 153, 51, 0.08), transparent 35%),
+  background:
+    radial-gradient(500px 500px at 8% 12%, rgba(255, 194, 245, 0.18), transparent 60%),
+    radial-gradient(420px 420px at 92% 8%, rgba(242, 153, 51, 0.16), transparent 62%),
+    radial-gradient(520px 520px at 18% 80%, rgba(242, 153, 51, 0.12), transparent 65%),
+    radial-gradient(460px 460px at 88% 78%, rgba(255, 194, 245, 0.14), transparent 60%),
     var(--bg);
   color: var(--text);
   line-height: 1.6;
@@ -279,8 +282,9 @@ a {
 
 .section-head h2 {
   font-family: "Playfair Display", serif;
-  font-size: 2.4rem;
+  font-size: 2.7rem;
   margin: 0 0 12px;
+  color: var(--accent);
 }
 
 .section-subtitle {
@@ -311,6 +315,8 @@ a {
   cursor: pointer;
   transition: transform 0.3s ease, border 0.3s ease, box-shadow 0.3s ease;
   backdrop-filter: blur(14px);
+  position: relative;
+  overflow: hidden;
 }
 
 .art-card:hover {
@@ -322,6 +328,20 @@ a {
 .art-card img {
   border-radius: 16px;
   margin-bottom: 12px;
+}
+
+.art-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #f29933, #ff8bcf);
+  color: #1b120b;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  z-index: 2;
 }
 
 .art-meta {
@@ -351,8 +371,9 @@ a {
 
 .bio-text h2 {
   font-family: "Playfair Display", serif;
-  font-size: 2.2rem;
+  font-size: 2.5rem;
   margin-bottom: 16px;
+  color: var(--accent);
 }
 
 .bio-text p {
@@ -422,6 +443,11 @@ a {
   grid-template-columns: 0.9fr 1.1fr;
   gap: 60px;
   align-items: start;
+}
+
+.contact-grid h2 {
+  color: var(--accent);
+  font-size: 2.5rem;
 }
 
 .contact-list {
@@ -516,6 +542,44 @@ textarea {
 
 .lightbox::backdrop {
   background: rgba(5, 5, 8, 0.75);
+}
+
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 194, 245, 0.7);
+  background: rgba(242, 153, 51, 0.08);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0;
+  transition: transform 0.15s ease, opacity 0.3s ease, background 0.3s ease;
+}
+
+.custom-cursor.is-visible {
+  opacity: 1;
+}
+
+.custom-cursor.is-active {
+  transform: translate(-50%, -50%) scale(1.4);
+  background: rgba(255, 194, 245, 0.18);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body {
+    cursor: none;
+  }
+
+  a,
+  button,
+  input,
+  textarea {
+    cursor: none;
+  }
 }
 
 .lightbox img {
@@ -1069,4 +1133,26 @@ textarea {
     flex-direction: column;
     align-items: flex-start;
   }
+}
+
+/* Ajustes finales de títulos */
+.section-head h2 {
+  font-size: clamp(2.6rem, 4vw, 3.1rem);
+  color: var(--accent);
+}
+
+.bio-text h2,
+.contact-grid h2 {
+  font-size: clamp(2.4rem, 3.6vw, 2.9rem);
+  color: var(--accent);
+}
+
+/* Fondo moderno: asegurar sobreescritura final */
+body {
+  background:
+    radial-gradient(500px 500px at 8% 12%, rgba(255, 194, 245, 0.18), transparent 60%),
+    radial-gradient(420px 420px at 92% 8%, rgba(242, 153, 51, 0.16), transparent 62%),
+    radial-gradient(520px 520px at 18% 80%, rgba(242, 153, 51, 0.12), transparent 65%),
+    radial-gradient(460px 460px at 88% 78%, rgba(255, 194, 245, 0.14), transparent 60%),
+    var(--bg);
 }
