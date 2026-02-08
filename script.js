@@ -5,6 +5,7 @@ const lightboxImage = document.getElementById("lightbox-image");
 const lightboxTitle = document.getElementById("lightbox-title");
 const lightboxClose = document.querySelector(".lightbox-close");
 const inputFields = document.querySelectorAll("[data-placeholder-es]");
+const contactForm = document.querySelector(".contact-form");
 const galleryGrid = document.querySelector("#gallery-grid");
 const galleryPath =
   galleryGrid?.dataset.galleryPath?.replace(/\/$/, "") || "assets/gallery";
@@ -12,6 +13,21 @@ const galleryFallback = "assets/hero-art.svg";
 
 let currentLang = "es";
 let activeArtwork = null;
+const prefersReducedMotion = window.matchMedia(
+  "(prefers-reduced-motion: reduce)"
+).matches;
+const revealObserver = prefersReducedMotion
+  ? null
+  : new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-visible");
+          revealObserver.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.2 }
+    );
 
 const formatTitle = (rawTitle) => {
   if (!rawTitle) return "";
@@ -38,6 +54,18 @@ const attachFallbacks = (root = document) => {
       image.src = fallback;
       image.removeAttribute("data-fallback");
     });
+  });
+};
+
+const registerReveals = (elements) => {
+  elements.forEach((element) => {
+    if (element.dataset.revealBound) return;
+    element.dataset.revealBound = "true";
+    if (prefersReducedMotion) {
+      element.classList.add("is-visible");
+      return;
+    }
+    revealObserver.observe(element);
   });
 };
 
@@ -101,7 +129,7 @@ const createGalleryCard = (src) => {
 
   const card = document.createElement("button");
   card.type = "button";
-  card.className = "art-card";
+  card.className = "art-card reveal";
   card.setAttribute("data-lightbox", "");
   card.setAttribute("data-src", src);
   card.setAttribute("data-fallback", galleryFallback);
@@ -160,6 +188,7 @@ const renderGallery = (items) => {
   });
 
   attachFallbacks(galleryGrid);
+  registerReveals(galleryGrid.querySelectorAll(".reveal"));
 };
 
 const fetchGalleryManifest = async () => {
@@ -215,6 +244,10 @@ if (savedLang === "es" || savedLang === "en") {
 
 attachFallbacks();
 loadGallery();
+document.querySelectorAll(".section").forEach((section) => {
+  section.classList.add("reveal");
+});
+registerReveals(document.querySelectorAll(".reveal"));
 
 if (toggleButton) {
   toggleButton.addEventListener("click", () => {
@@ -253,6 +286,78 @@ if (lightbox) {
   lightbox.addEventListener("click", (event) => {
     if (event.target === lightbox) {
       lightbox.close();
+    }
+  });
+}
+
+if (contactForm) {
+  const statusEl = contactForm.querySelector(".form-status");
+  const submitButtons = contactForm.querySelectorAll('button[type="submit"]');
+  const messages = {
+    sending: {
+      es: "Enviando mensaje...",
+      en: "Sending message..."
+    },
+    success: {
+      es: "Mensaje enviado. Gracias.",
+      en: "Message sent. Thank you."
+    },
+    error: {
+      es: "No se pudo enviar. Inténtalo de nuevo.",
+      en: "Could not send. Please try again."
+    },
+    required: {
+      es: "Completa todos los campos.",
+      en: "Please complete all fields."
+    }
+  };
+
+  const setStatus = (key) => {
+    if (!statusEl) return;
+    statusEl.textContent = messages[key]?.[currentLang] || "";
+  };
+
+  const setSubmitting = (isSubmitting) => {
+    submitButtons.forEach((button) => {
+      button.disabled = isSubmitting;
+      button.style.opacity = isSubmitting ? "0.6" : "";
+      button.style.pointerEvents = isSubmitting ? "none" : "";
+    });
+  };
+
+  contactForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const formData = new FormData(contactForm);
+    const name = formData.get("nombre")?.toString().trim() || "";
+    const email = formData.get("email")?.toString().trim() || "";
+    const message = formData.get("mensaje")?.toString().trim() || "";
+
+    if (!name || !email || !message) {
+      setStatus("required");
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      setStatus("sending");
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ nombre: name, email, mensaje: message })
+      });
+
+      if (!response.ok) {
+        throw new Error("Request failed");
+      }
+
+      contactForm.reset();
+      setStatus("success");
+    } catch (error) {
+      setStatus("error");
+    } finally {
+      setSubmitting(false);
     }
   });
 }
