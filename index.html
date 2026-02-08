@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="es" data-lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Begovi | Pintura contemporánea</title>
+    <meta
+      name="description"
+      content="Begovi, artista visual contemporánea. Galería de obras, biografía, exposiciones y contacto."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="logo" href="#inicio">
+          <img src="assets/logo.png" alt="Begovi" />
+        </a>
+        <nav class="nav">
+          <a href="#galeria" class="lang-es">Galería</a>
+          <a href="#galeria" class="lang-en">Gallery</a>
+          <a href="#bio" class="lang-es">Biografía</a>
+          <a href="#bio" class="lang-en">Biography</a>
+          <a href="#exposiciones" class="lang-es">Exposiciones</a>
+          <a href="#exposiciones" class="lang-en">Exhibitions</a>
+          <a href="#contacto" class="lang-es">Contacto</a>
+          <a href="#contacto" class="lang-en">Contact</a>
+        </nav>
+        <button class="lang-toggle" type="button" aria-label="Cambiar idioma">
+          EN
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section id="inicio" class="hero">
+        <img
+          class="hero-bg"
+          src="assets/hero-art.png"
+          data-fallback="assets/hero-art.svg"
+          alt=""
+          aria-hidden="true"
+        />
+        <div class="container hero-grid hero-content">
+          <div class="hero-text">
+            <p class="eyebrow lang-es">Pintura contemporánea</p>
+            <p class="eyebrow lang-en">Contemporary painting</p>
+            <p class="hero-subtitle lang-es">
+              Begoña Gómez Virumbrales, artista visual contemporánea desde España.
+              Realismo romántico contemporáneo y minimalismo atmosférico: obras donde la luz,
+              la emoción y el silencio se convierten en materia.
+            </p>
+            <p class="hero-subtitle lang-en">
+              Begoña Gómez Virumbrales, contemporary visual artist based in Spain.
+              An intimate exploration of matter, light, and silence.
+            </p>
+            <div class="hero-actions">
+              <a class="btn primary lang-es" href="#galeria">Ver galería</a>
+              <a class="btn primary lang-en" href="#galeria">View gallery</a>
+              <a class="btn ghost lang-es" href="#contacto">Contacto</a>
+              <a class="btn ghost lang-en" href="#contacto">Contact</a>
+            </div>
+            <p class="hero-note lang-es">España · Obras seleccionadas desde 1986</p>
+            <p class="hero-note lang-en">Spain · Selected works since 1986</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="galeria" class="section">
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <h2 class="lang-es">Galería</h2>
+              <h2 class="lang-en">Gallery</h2>
+              <p class="section-subtitle lang-es">
+                Series que dialogan con el tiempo, la textura y el gesto.
+              </p>
+              <p class="section-subtitle lang-en">
+                Series that explore time, texture, and gesture.
+              </p>
+            </div>
+            <span class="section-label lang-es">Obras recientes</span>
+            <span class="section-label lang-en">Recent works</span>
+          </div>
+          <div
+            class="gallery-grid"
+            id="gallery-grid"
+            data-gallery-path="assets/gallery"
+          ></div>
+        </div>
+      </section>
+
+      <section id="bio" class="section section-alt">
+        <div class="container bio-grid">
+          <div class="bio-portrait">
+            <img
+              src="assets/portrait.png"
+              data-fallback="assets/portrait.svg"
+              alt="Retrato artístico de Begovi"
+            />
+          </div>
+          <div class="bio-text">
+            <h2 class="lang-es">Biografía</h2>
+            <h2 class="lang-en">Biography</h2>
+            <p class="lang-es">
+              Begovi firma la obra de Begoña Gómez Virumbrales. Su trabajo nace
+              de la observación de la materia y sus ritmos internos, con una
+              mirada silenciosa que habita el espacio entre lo visible y lo
+              intuido.
+            </p>
+            <p class="lang-es">
+              Sus piezas se construyen en capas de pigmento, veladuras y
+              texturas naturales, invitando a una contemplación lenta y
+              sensorial.
+            </p>
+            <p class="lang-en">
+              Begovi is the signature of Begoña Gómez Virumbrales. Her work
+              arises from observing matter and its inner rhythms, with a quiet
+              gaze that lives between the visible and the intuited.
+            </p>
+            <p class="lang-en">
+              Each piece is built through layers of pigment, glazes, and natural
+              textures, inviting slow and sensory contemplation.
+            </p>
+            <div class="bio-highlight">
+              <span class="lang-es">Disponible para exposiciones y colaboraciones.</span>
+              <span class="lang-en">Available for exhibitions and collaborations.</span>
+            </div>
+            <p class="bio-note lang-es">
+              Pintora amateur. Algunas obras son copias o están inspiradas en originales.
+            </p>
+            <p class="bio-note lang-en">
+              Amateur painter. Some works are copies or inspired by originals.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="exposiciones" class="section">
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <h2 class="lang-es">Exposiciones</h2>
+              <h2 class="lang-en">Exhibitions</h2>
+              <p class="section-subtitle lang-es">
+                Recorridos recientes y próximos encuentros.
+              </p>
+              <p class="section-subtitle lang-en">
+                Recent journeys and upcoming encounters.
+              </p>
+            </div>
+            <span class="section-label lang-es">2022–2025</span>
+            <span class="section-label lang-en">2022–2025</span>
+          </div>
+          <div class="expo-grid">
+            <article class="expo-card">
+              <img
+                class="expo-image"
+                src="assets/events/quintana.png"
+                alt="Cartel de la exposición"
+              />
+              <span class="expo-date lang-es">29 marzo · 5 abril</span>
+              <span class="expo-date lang-en">Mar 29 · Apr 5</span>
+              <h3 class="lang-es">Exposición de pintura</h3>
+              <h3 class="lang-en">Painting exhibition</h3>
+              <p class="lang-es">Centro de Desarrollo Rural · Quintana Martín Galíndez · Burgos</p>
+              <p class="lang-en">Rural Development Center · Quintana Martín Galíndez · Burgos</p>
+              <p class="lang-es">Entrada gratuita</p>
+              <p class="lang-en">Free entry</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="contacto" class="section section-alt">
+        <div class="container contact-grid">
+          <div>
+            <h2 class="lang-es">Contacto</h2>
+            <h2 class="lang-en">Contact</h2>
+            <p class="lang-es">
+              Para encargos, exposiciones o adquisiciones, escríbeme y te
+              responderé en breve.
+            </p>
+            <p class="lang-en">
+              For commissions, exhibitions, or acquisitions, write to me and I
+              will reply shortly.
+            </p>
+            <ul class="contact-list">
+              <li>
+                <span class="contact-label lang-es">Email</span>
+                <span class="contact-label lang-en">Email</span>
+                <a href="mailto:b.govima@gmail.com">b.govima@gmail.com</a>
+              </li>
+              <li>
+                <span class="contact-label lang-es">Ubicación</span>
+                <span class="contact-label lang-en">Location</span>
+                <span>España</span>
+              </li>
+            </ul>
+          </div>
+          <form class="contact-form">
+            <div class="field">
+              <label for="nombre">
+                <span class="lang-es">Nombre</span>
+                <span class="lang-en">Name</span>
+              </label>
+              <input
+                id="nombre"
+                type="text"
+                name="nombre"
+                placeholder="Nombre"
+                data-placeholder-es="Nombre"
+                data-placeholder-en="Name"
+              />
+            </div>
+            <div class="field">
+              <label for="email">
+                <span class="lang-es">Email</span>
+                <span class="lang-en">Email</span>
+              </label>
+              <input
+                id="email"
+                type="email"
+                name="email"
+                placeholder="Email"
+                data-placeholder-es="Email"
+                data-placeholder-en="Email"
+              />
+            </div>
+            <div class="field">
+              <label for="mensaje">
+                <span class="lang-es">Mensaje</span>
+                <span class="lang-en">Message</span>
+              </label>
+              <textarea
+                id="mensaje"
+                name="mensaje"
+                rows="5"
+                placeholder="Cuéntame sobre tu proyecto"
+                data-placeholder-es="Cuéntame sobre tu proyecto"
+                data-placeholder-en="Tell me about your project"
+              ></textarea>
+            </div>
+            <button class="btn primary lang-es" type="submit">Enviar mensaje</button>
+            <button class="btn primary lang-en" type="submit">Send message</button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <span>© 2026 Begovi</span>
+        <span class="lang-es">Pintura contemporánea · España</span>
+        <span class="lang-en">Contemporary painting · Spain</span>
+      </div>
+    </footer>
+
+    <dialog id="lightbox" class="lightbox">
+      <button class="lightbox-close" type="button" aria-label="Cerrar">
+        ✕
+      </button>
+      <img id="lightbox-image" src="" alt="" />
+      <p id="lightbox-title"></p>
+    </dialog>
+
+    <script src="script.js"></script>
+  </body>
+</html>
