@@ -8,12 +8,32 @@ const inputFields = document.querySelectorAll("[data-placeholder-es]");
 const customCursor = document.querySelector(".custom-cursor");
 const contactForm = document.querySelector(".contact-form");
 const galleryGrid = document.querySelector("#gallery-grid");
+const gallerySearch = document.getElementById("gallery-search");
+const galleryFilterInputs = document.querySelectorAll(
+  'input[name="gallery-status"]'
+);
+const navLinks = Array.from(document.querySelectorAll('.nav a[href^="#"]'));
+const mobileToggle = document.querySelector(".mobile-toggle");
+const menuOverlay = document.querySelector(".menu-overlay");
+const navMenu = document.querySelector(".nav");
+
+function toggleMenu(open) {
+  const shouldOpen =
+    typeof open === "boolean"
+      ? open
+      : !document.body.classList.contains("menu-open");
+  document.body.classList.toggle("menu-open", shouldOpen);
+  if (mobileToggle) {
+    mobileToggle.setAttribute("aria-expanded", shouldOpen ? "true" : "false");
+  }
+}
 const galleryPath =
   galleryGrid?.dataset.galleryPath?.replace(/\/$/, "") || "assets/gallery";
 const galleryFallback = "assets/hero-art.svg";
 
 let currentLang = "es";
 let activeArtwork = null;
+let galleryItems = [];
 const prefersReducedMotion = window.matchMedia(
   "(prefers-reduced-motion: reduce)"
 ).matches;
@@ -41,6 +61,13 @@ const formatTitle = (rawTitle) => {
   if (!withSpaces) return "";
   return withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1);
 };
+
+const normalizeText = (value) =>
+  value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .trim();
 
 const getImageTitleFromSrc = (src) => {
   if (!src) return "";
@@ -205,30 +232,34 @@ const normalizeGalleryItem = (src) => {
 const isImageFile = (fileName) =>
   /\.(jpe?g|png|webp|gif)$/i.test(fileName);
 
-const renderGallery = (items) => {
-  if (!galleryGrid) return;
-  galleryGrid.innerHTML = "";
-  const validItems = items
+const buildGalleryItems = (items) =>
+  items
     .map((item) => {
-      const src = getGalleryItemSrc(item);
-      if (!isImageFile(src)) return null;
+      const srcRaw = getGalleryItemSrc(item);
+      if (!isImageFile(srcRaw)) return null;
+      const src = normalizeGalleryItem(srcRaw);
+      const title = getGalleryItemTitle(item) || getImageTitleFromSrc(src);
       return {
         src,
-        title: getGalleryItemTitle(item),
-        sold: getGalleryItemSold(item)
+        title,
+        sold: getGalleryItemSold(item),
+        search: normalizeText(title || "")
       };
     })
     .filter(Boolean);
-  if (!validItems.length) {
+
+const renderGalleryItems = (items) => {
+  if (!galleryGrid) return;
+  galleryGrid.innerHTML = "";
+  if (!items.length) {
     galleryGrid.innerHTML =
-      '<p class="lang-es">No hay obras aún.</p><p class="lang-en">No artworks yet.</p>';
+      '<p class="lang-es">No hay obras que coincidan.</p><p class="lang-en">No matching artworks.</p>';
     return;
   }
 
-  validItems.forEach((item) => {
-    const src = normalizeGalleryItem(item.src);
+  items.forEach((item) => {
     const card = createGalleryCard({
-      src,
+      src: item.src,
       title: item.title,
       sold: item.sold
     });
@@ -239,6 +270,32 @@ const renderGallery = (items) => {
 
   attachFallbacks(galleryGrid);
   registerReveals(galleryGrid.querySelectorAll(".reveal"));
+};
+
+const applyGalleryFilters = () => {
+  if (!galleryItems.length) return;
+  const query = normalizeText(gallerySearch?.value || "");
+  const filterValue =
+    document.querySelector('input[name="gallery-status"]:checked')?.value ||
+    "all";
+  const filtered = galleryItems.filter((item) => {
+    const matchesSearch = !query || item.search.includes(query);
+    const matchesStatus =
+      filterValue === "all" ||
+      (filterValue === "sold" && item.sold) ||
+      (filterValue === "available" && !item.sold);
+    return matchesSearch && matchesStatus;
+  });
+  renderGalleryItems(filtered);
+};
+
+const updateChipState = () => {
+  galleryFilterInputs.forEach((input) => {
+    const chip = input.closest(".chip");
+    if (chip) {
+      chip.classList.toggle("is-active", input.checked);
+    }
+  });
 };
 
 const fetchGalleryManifest = async () => {
@@ -274,15 +331,21 @@ const loadGallery = async () => {
   if (!galleryGrid) return;
   const manifestItems = await fetchGalleryManifest();
   if (manifestItems?.length) {
-    renderGallery(manifestItems);
+    galleryItems = buildGalleryItems(manifestItems);
+    renderGalleryItems(galleryItems);
+    applyGalleryFilters();
     return;
   }
   const listedItems = await fetchGalleryListing();
   if (listedItems?.length) {
-    renderGallery(listedItems);
+    galleryItems = buildGalleryItems(listedItems);
+    renderGalleryItems(galleryItems);
+    applyGalleryFilters();
     return;
   }
-  renderGallery([]);
+  galleryItems = [];
+  renderGalleryItems([]);
+  applyGalleryFilters();
 };
 
 const savedLang = window.localStorage.getItem("begovi-lang");
@@ -294,6 +357,16 @@ if (savedLang === "es" || savedLang === "en") {
 
 attachFallbacks();
 loadGallery();
+updateChipState();
+if (gallerySearch) {
+  gallerySearch.addEventListener("input", applyGalleryFilters);
+}
+galleryFilterInputs.forEach((input) => {
+  input.addEventListener("change", () => {
+    applyGalleryFilters();
+    updateChipState();
+  });
+});
 document.querySelectorAll(".section").forEach((section) => {
   section.classList.add("reveal");
 });
@@ -314,9 +387,76 @@ document.querySelectorAll('a[href^="#"]').forEach((link) => {
     const target = document.querySelector(href);
     if (!target) return;
     event.preventDefault();
+    setActiveNav(href);
     target.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (document.body.classList.contains("menu-open")) {
+      toggleMenu(false);
+    }
   });
 });
+
+if (mobileToggle) {
+  mobileToggle.addEventListener("click", () => toggleMenu());
+}
+
+if (menuOverlay) {
+  menuOverlay.addEventListener("click", () => toggleMenu(false));
+}
+
+if (navMenu) {
+  navMenu.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      toggleMenu(false);
+    }
+  });
+}
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    toggleMenu(false);
+  }
+});
+
+const setActiveNav = (hash) => {
+  navLinks.forEach((link) => {
+    link.classList.toggle("active", link.getAttribute("href") === hash);
+  });
+};
+
+if ("IntersectionObserver" in window && navLinks.length) {
+  const sectionMap = navLinks
+    .map((link) => document.querySelector(link.getAttribute("href")))
+    .filter(Boolean);
+  const navObserver = new IntersectionObserver(
+    (entries) => {
+      const visible = entries.filter((entry) => entry.isIntersecting);
+      if (!visible.length) return;
+      const topMost = visible.sort(
+        (a, b) => a.boundingClientRect.top - b.boundingClientRect.top
+      )[0];
+      const id = `#${topMost.target.id}`;
+      setActiveNav(id);
+    },
+    { rootMargin: "-10% 0px -70% 0px", threshold: [0.05, 0.15, 0.3] }
+  );
+  sectionMap.forEach((section) => navObserver.observe(section));
+} else if (navLinks.length) {
+  const onScroll = () => {
+    const scrollPos = window.scrollY + window.innerHeight * 0.4;
+    let current = navLinks[0]?.getAttribute("href") || "#inicio";
+    navLinks.forEach((link) => {
+      const section = document.querySelector(link.getAttribute("href"));
+      if (section && section.offsetTop <= scrollPos) {
+        current = link.getAttribute("href");
+      }
+    });
+    setActiveNav(current);
+  };
+  window.addEventListener("scroll", () => {
+    window.requestAnimationFrame(onScroll);
+  });
+  onScroll();
+}
 
 if (customCursor && hasFinePointer) {
   let mouseX = 0;

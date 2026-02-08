@@ -23,6 +23,8 @@
           <img src="assets/logo.png" alt="Begovi" />
         </a>
         <nav class="nav">
+          <a href="#inicio" class="lang-es">Inicio</a>
+          <a href="#inicio" class="lang-en">Home</a>
           <a href="#galeria" class="lang-es">Galería</a>
           <a href="#galeria" class="lang-en">Gallery</a>
           <a href="#bio" class="lang-es">Biografía</a>
@@ -35,8 +37,13 @@
         <button class="lang-toggle" type="button" aria-label="Cambiar idioma">
           EN
         </button>
+        <button class="mobile-toggle" type="button" aria-label="Abrir menú" aria-expanded="false">
+          <span></span>
+          <span></span>
+        </button>
       </div>
     </header>
+    <div class="menu-overlay" aria-hidden="true"></div>
 
     <main>
       <section id="inicio" class="hero">
@@ -87,6 +94,38 @@
             </div>
             <span class="section-label lang-es">Obras recientes</span>
             <span class="section-label lang-en">Recent works</span>
+          </div>
+          <div class="gallery-controls">
+            <div class="control-field">
+              <div class="chip-group" role="radiogroup" aria-label="Estado">
+                <label class="chip">
+                  <input type="radio" name="gallery-status" value="all" checked />
+                  <span class="lang-es">Todos</span>
+                  <span class="lang-en">All</span>
+                </label>
+                <label class="chip">
+                  <input type="radio" name="gallery-status" value="available" />
+                  <span class="lang-es">Disponibles</span>
+                  <span class="lang-en">Available</span>
+                </label>
+                <label class="chip">
+                  <input type="radio" name="gallery-status" value="sold" />
+                  <span class="lang-es">Vendidos</span>
+                  <span class="lang-en">Sold</span>
+                </label>
+              </div>
+            </div>
+            <div class="search-field">
+              <span class="search-icon" aria-hidden="true"></span>
+              <input
+                id="gallery-search"
+                type="search"
+                placeholder="Buscar por título"
+                data-placeholder-es="Buscar por título"
+                data-placeholder-en="Search by title"
+                aria-label="Buscar por título"
+              />
+            </div>
           </div>
           <div
             class="gallery-grid"

@@ -109,14 +109,20 @@ a {
   transition: transform 0.3s ease;
 }
 
-.nav a:hover::after {
+.nav a:hover::after,
+.nav a.active::after {
   transform: scaleX(1);
+}
+
+.nav a.active {
+  color: var(--text);
 }
 
 .lang-toggle {
   border: 1px solid var(--border);
   background: transparent;
-  color: var(--text);
+  color: var(--accent-secondary);
+  border-color: var(--accent-secondary);
   padding: 8px 14px;
   font-size: 0.8rem;
   letter-spacing: 0.2em;
@@ -128,6 +134,34 @@ a {
 .lang-toggle:hover {
   border-color: var(--accent-secondary);
   color: var(--accent-secondary);
+}
+
+.mobile-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.mobile-toggle span {
+  width: 18px;
+  height: 2px;
+  background: var(--accent-secondary);
+  display: block;
+}
+
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 8, 12, 0.6);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 9;
 }
 
 .hero {
@@ -297,6 +331,98 @@ a {
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--accent-secondary);
+}
+
+.gallery-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  align-items: flex-end;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.control-field {
+  display: grid;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.control-field input {
+  min-width: 220px;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 12px;
+  color: var(--text);
+  font-family: inherit;
+}
+
+.search-field {
+  margin-left: auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-field input {
+  min-width: 240px;
+  padding: 10px 12px 10px 36px;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text);
+  font-family: inherit;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  width: 16px;
+  height: 16px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='11' cy='11' r='6.5' stroke='%23b6b6c2' stroke-width='1.5'/%3E%3Cpath d='M16.2 16.2L21 21' stroke='%23b6b6c2' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  opacity: 0.9;
+}
+
+.chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--glass);
+  padding: 8px 14px;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+  transition: border 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+
+.chip input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.chip:has(input:checked) {
+  color: #1b120b;
+  border-color: rgba(242, 153, 51, 0.6);
+  background: linear-gradient(135deg, #f29933, #ff8bcf);
 }
 
 .gallery-grid {
@@ -482,7 +608,9 @@ a {
 
 .g-recaptcha {
   transform: scale(0.95);
-  transform-origin: left top;
+  transform-origin: center top;
+  display: flex;
+  justify-content: center;
 }
 
 .form-status {
@@ -648,7 +776,21 @@ textarea {
 
 @media (max-width: 760px) {
   .nav {
-    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: min(80vw, 320px);
+    background: rgba(11, 11, 14, 0.96);
+    backdrop-filter: blur(14px);
+    flex-direction: column;
+    padding: 96px 24px 24px;
+    gap: 20px;
+    transform: translateX(100%);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    z-index: 10;
   }
 
   .section-head {
@@ -658,6 +800,7 @@ textarea {
 
   .g-recaptcha {
     transform: scale(0.85);
+    transform-origin: center top;
   }
 }
 :root {
@@ -748,7 +891,8 @@ a {
 .lang-toggle {
   border: 1px solid var(--border);
   background: transparent;
-  color: var(--text);
+  color: var(--accent-secondary);
+  border-color: var(--accent-secondary);
   padding: 8px 14px;
   font-size: 0.8rem;
   letter-spacing: 0.2em;
@@ -1133,6 +1277,39 @@ textarea {
     flex-direction: column;
     align-items: flex-start;
   }
+
+  .gallery-controls {
+    justify-content: flex-start;
+  }
+
+  .search-field {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .search-field input {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .mobile-toggle {
+    display: inline-flex;
+  }
+}
+
+body.menu-open .nav {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+body.menu-open .menu-overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+body.menu-open {
+  overflow: hidden;
 }
 
 /* Ajustes finales de títulos */
@@ -1150,9 +1327,34 @@ textarea {
 /* Fondo moderno: asegurar sobreescritura final */
 body {
   background:
-    radial-gradient(500px 500px at 8% 12%, rgba(255, 194, 245, 0.18), transparent 60%),
-    radial-gradient(420px 420px at 92% 8%, rgba(242, 153, 51, 0.16), transparent 62%),
-    radial-gradient(520px 520px at 18% 80%, rgba(242, 153, 51, 0.12), transparent 65%),
-    radial-gradient(460px 460px at 88% 78%, rgba(255, 194, 245, 0.14), transparent 60%),
+    radial-gradient(62vmax 62vmax at 8% 12%, rgba(242, 153, 51, 0.34), transparent 60%),
+    radial-gradient(58vmax 58vmax at 92% 8%, rgba(255, 194, 245, 0.32), transparent 62%),
+    radial-gradient(52vmax 52vmax at 18% 35%, rgba(255, 194, 245, 0.24), transparent 62%),
+    radial-gradient(44vmax 44vmax at 40% 22%, rgba(242, 153, 51, 0.2), transparent 62%),
+    radial-gradient(38vmax 38vmax at 65% 18%, rgba(255, 194, 245, 0.22), transparent 60%),
+    radial-gradient(50vmax 50vmax at 12% 55%, rgba(255, 194, 245, 0.2), transparent 60%),
+    radial-gradient(46vmax 46vmax at 72% 45%, rgba(242, 153, 51, 0.18), transparent 62%),
+    radial-gradient(60vmax 60vmax at 18% 80%, rgba(242, 153, 51, 0.26), transparent 65%),
+    radial-gradient(56vmax 56vmax at 88% 78%, rgba(255, 194, 245, 0.28), transparent 60%),
+    radial-gradient(48vmax 48vmax at 72% 55%, rgba(242, 153, 51, 0.2), transparent 62%),
+    radial-gradient(42vmax 42vmax at 35% 75%, rgba(255, 194, 245, 0.22), transparent 60%),
+    radial-gradient(36vmax 36vmax at 78% 70%, rgba(242, 153, 51, 0.18), transparent 60%),
     var(--bg);
+}
+
+@media (max-width: 760px) {
+  .nav {
+    display: flex;
+  }
+}
+
+/* Chips: estado seleccionado compatible en Safari */
+.chip input {
+  appearance: none;
+}
+
+.chip.is-active {
+  color: #1b120b;
+  border-color: rgba(242, 153, 51, 0.6);
+  background: linear-gradient(135deg, #f29933, #ff8bcf);
 }
