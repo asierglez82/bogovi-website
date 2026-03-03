@@ -23,6 +23,7 @@
     { "file": "la_mirada_oculta.jpg", "sold": false },
     { "file": "la_orilla_de_los_recuerdos.jpg", "sold": true },
     { "file": "la_orilla_infinita.jpg", "sold": true },
+    { "file": "la_orilla_infinita_II.jpg", "sold": true },
     { "file": "la_orilla.jpg", "sold": true },
     { "file": "la_puerta_del_silencio.jpg", "sold": false },
     { "file": "la_ultima_calada.jpg", "sold": false },
@@ -35,6 +36,8 @@
     { "file": "pescadores_al_alba.jpg", "sold": true },
     { "file": "reposo_en_la_orilla.jpg", "sold": true },
     { "file": "ritmo_industrial.jpg", "sold": true },
+    { "file": "laberinto_de_luz.jpg", "sold": false },
+    { "file": "laberinto_de_luz_II.jpg", "sold": false },
     { "file": "rojo_en_la_penumbra.jpg", "sold": false },
     { "file": "sala_boomerang.jpg", "sold": true },
     { "file": "silencio_blanco.jpg", "sold": true },
@@ -50,9 +53,6 @@
     { "file": "toscana_en_rojo.jpg", "sold": true },
     { "file": "velas_en_calma.jpg", "sold": true },
     { "file": "verano_pequeño.jpg", "sold": true },
-    { "file": "sinfonia_geometrica.jpg", "sold": true },
-    { "file": "la_orilla_infinita_II.jpg", "sold": true },
-    { "file": "laberinto_de_luz.jpg", "sold": true },
-    { "file": "laberinto_de_luz_II.jpg", "sold": true }
+    { "file": "sinfonia_geometrica.jpg", "sold": true }
   ]
 }
