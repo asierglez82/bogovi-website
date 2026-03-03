@@ -28,7 +28,7 @@
     { "file": "la_ultima_calada.jpg", "sold": false },
     { "file": "labios_de_medianoche.jpg", "sold": true },
     { "file": "mareas_de_cobre.jpg", "sold": false },
-    { "file": "naranjas_en_calma.jpg", "sold": true },
+    { "file": "naranjas_en_calma.jpg", "sold": false },
     { "file": "noche_de_cristal.jpg", "sold": true },
     { "file": "pequeño_explorador.jpg", "sold": true },
     { "file": "pequeño_horizonte.jpg", "sold": true },
@@ -44,8 +44,15 @@
     { "file": "sombras_de_la_habana.jpg", "sold": true },
     { "file": "sueño_en_rosa.jpg", "sold": false },
     { "file": "tarde_en_la_costa.jpg", "sold": true },
+    { "file": "trainera.jpg", "sold": true },
+    { "file": "mariposas_I.jpg", "sold": false },
+    { "file": "mariposas_II.jpg", "sold": false },
     { "file": "toscana_en_rojo.jpg", "sold": true },
     { "file": "velas_en_calma.jpg", "sold": true },
-    { "file": "verano_pequeño.jpg", "sold": true }
+    { "file": "verano_pequeño.jpg", "sold": true },
+    { "file": "sinfonia_geometrica.jpg", "sold": true },
+    { "file": "la_orilla_infinita_II.jpg", "sold": true },
+    { "file": "laberinto_de_luz.jpg", "sold": true },
+    { "file": "laberinto_de_luz_II.jpg", "sold": true }
   ]
 }
