@@ -34,6 +34,8 @@ const galleryFallback = "assets/hero-art.svg";
 let currentLang = "es";
 let activeArtwork = null;
 let galleryItems = [];
+let currentLightboxIndex = -1;
+let renderedItems = [];
 const prefersReducedMotion = window.matchMedia(
   "(prefers-reduced-motion: reduce)"
 ).matches;
@@ -133,26 +135,48 @@ const setLanguage = (lang) => {
   }
 };
 
+const openLightboxAt = (index) => {
+  if (!lightbox || !lightboxImage || !lightboxTitle) return;
+  if (!renderedItems.length) return;
+  currentLightboxIndex = ((index % renderedItems.length) + renderedItems.length) % renderedItems.length;
+  const item = renderedItems[currentLightboxIndex];
+  const title = item.title || "";
+  activeArtwork = { titleEs: title, titleEn: title };
+  lightboxImage.src = item.src;
+  lightboxImage.setAttribute("data-fallback", galleryFallback);
+  lightboxTitle.textContent = currentLang === "es" ? title : title;
+  lightboxImage.setAttribute("alt", title);
+};
+
+const navigateLightbox = (direction) => {
+  if (!renderedItems.length) return;
+  openLightboxAt(currentLightboxIndex + direction);
+};
+
 const openLightboxFromCard = (card) => {
   if (!lightbox || !lightboxImage || !lightboxTitle) return;
-  const titleEs = card.getAttribute("data-title-es") || "";
-  const titleEn = card.getAttribute("data-title-en") || "";
   const src = card.getAttribute("data-src") || "";
-  const fallback = card.getAttribute("data-fallback") || "";
-  activeArtwork = { titleEs, titleEn };
-  lightboxImage.src = src;
-  if (fallback) {
-    lightboxImage.setAttribute("data-fallback", fallback);
+  const index = renderedItems.findIndex((item) => item.src === src);
+  if (index !== -1) {
+    openLightboxAt(index);
   } else {
-    lightboxImage.removeAttribute("data-fallback");
+    const titleEs = card.getAttribute("data-title-es") || "";
+    const titleEn = card.getAttribute("data-title-en") || "";
+    activeArtwork = { titleEs, titleEn };
+    lightboxImage.src = src;
+    const fallback = card.getAttribute("data-fallback") || "";
+    if (fallback) {
+      lightboxImage.setAttribute("data-fallback", fallback);
+    } else {
+      lightboxImage.removeAttribute("data-fallback");
+    }
+    lightboxTitle.textContent = currentLang === "es" ? titleEs : titleEn;
+    lightboxImage.setAttribute("alt", currentLang === "es" ? titleEs : titleEn);
+    currentLightboxIndex = -1;
   }
-  lightboxTitle.textContent = currentLang === "es" ? titleEs : titleEn;
-  lightboxImage.setAttribute(
-    "alt",
-    currentLang === "es" ? titleEs : titleEn
-  );
   if (typeof lightbox.showModal === "function") {
     lightbox.showModal();
+    document.body.classList.add("lightbox-open");
   }
 };
 
@@ -257,6 +281,7 @@ const renderGalleryItems = (items) => {
     return;
   }
 
+  renderedItems = items;
   items.forEach((item) => {
     const card = createGalleryCard({
       src: item.src,
@@ -371,6 +396,12 @@ document.querySelectorAll(".section").forEach((section) => {
   section.classList.add("reveal");
 });
 registerReveals(document.querySelectorAll(".reveal"));
+
+setTimeout(() => {
+  document.querySelectorAll(".reveal:not(.is-visible)").forEach((el) => {
+    el.classList.add("is-visible");
+  });
+}, 1500);
 
 if (toggleButton) {
   toggleButton.addEventListener("click", () => {
@@ -511,9 +542,36 @@ if (lightboxClose) {
 }
 
 if (lightbox) {
+  lightbox.addEventListener("close", () => {
+    document.body.classList.remove("lightbox-open");
+  });
+}
+
+const lightboxPrev = document.querySelector(".lightbox-prev");
+const lightboxNext = document.querySelector(".lightbox-next");
+
+if (lightboxPrev) {
+  lightboxPrev.addEventListener("click", () => navigateLightbox(-1));
+}
+
+if (lightboxNext) {
+  lightboxNext.addEventListener("click", () => navigateLightbox(1));
+}
+
+if (lightbox) {
   lightbox.addEventListener("click", (event) => {
     if (event.target === lightbox) {
       lightbox.close();
+    }
+  });
+
+  lightbox.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      navigateLightbox(-1);
+    } else if (event.key === "ArrowRight") {
+      event.preventDefault();
+      navigateLightbox(1);
     }
   });
 }

@@ -53,6 +53,11 @@
     { "file": "toscana_en_rojo.jpg", "sold": true },
     { "file": "velas_en_calma.jpg", "sold": true },
     { "file": "verano_pequeño.jpg", "sold": true },
-    { "file": "sinfonia_geometrica.jpg", "sold": true }
+    { "file": "sinfonia_geometrica.jpg", "sold": true },
+    { "file": "arco_de_tarde.jpg", "sold": true },
+    { "file": "la_dama_de_los_petalos.jpeg", "sold": true },
+    { "file": "reposo_en_tallo.jpg", "sold": true },
+    { "file": "rosa_entre_sombras.jpg", "sold": true },
+    { "file": "tres_calas.jpg", "sold": true }
   ]
 }
