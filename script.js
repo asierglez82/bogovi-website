@@ -576,6 +576,46 @@ if (lightbox) {
   });
 }
 
+/* ── Scroll progress bar + header shadow + scroll-to-top ── */
+const scrollProgress = document.querySelector(".scroll-progress");
+const siteHeader = document.querySelector(".site-header");
+const scrollTopBtn = document.querySelector(".scroll-top");
+const heroBg = document.querySelector(".hero-bg");
+
+const handleScrollEffects = () => {
+  const scrollY = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = docHeight > 0 ? (scrollY / docHeight) * 100 : 0;
+
+  if (scrollProgress) {
+    scrollProgress.style.width = `${progress}%`;
+  }
+
+  if (siteHeader) {
+    siteHeader.classList.toggle("scrolled", scrollY > 60);
+  }
+
+  if (scrollTopBtn) {
+    scrollTopBtn.classList.toggle("is-visible", scrollY > 500);
+  }
+
+  // Hero parallax
+  if (heroBg && !prefersReducedMotion) {
+    heroBg.style.transform = `translateY(${scrollY * 0.25}px) scale(1.05)`;
+  }
+};
+
+window.addEventListener("scroll", () => {
+  window.requestAnimationFrame(handleScrollEffects);
+}, { passive: true });
+handleScrollEffects();
+
+if (scrollTopBtn) {
+  scrollTopBtn.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+}
+
 if (contactForm) {
   const statusEl = contactForm.querySelector(".form-status");
   const submitButtons = contactForm.querySelectorAll('button[type="submit"]');
